@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,9 +52,16 @@ fun LoginScreen(loginViewModel: LoginViewModel, modifier: Modifier) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Header(Modifier.align(Alignment.TopEnd))
-        Body(Modifier.align(Alignment.Center), loginViewModel)
-        Footer(Modifier.align(Alignment.BottomCenter))
+        val isLoading: Boolean by loginViewModel.isLoading.observeAsState(initial = false)
+        if (isLoading){
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                CircularProgressIndicator()
+            }
+        } else {
+            Header(Modifier.align(Alignment.TopEnd))
+            Body(Modifier.align(Alignment.Center), loginViewModel)
+            Footer(Modifier.align(Alignment.BottomCenter))
+        }
     }
 }
 
@@ -103,7 +111,7 @@ fun Body(modifier: Modifier, loginViewModel: LoginViewModel) {
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.size(16.dp))
-        LoginButton(isLoginEnable)
+        LoginButton(isLoginEnable, loginViewModel)
         Spacer(modifier = Modifier.size(16.dp))
         LoginDivider()
         Spacer(modifier = Modifier.size(32.dp))
@@ -155,12 +163,10 @@ fun LoginDivider() {
 }
 
 @Composable
-fun LoginButton(isLoginEnable: Boolean) {
+fun LoginButton(isLoginEnable: Boolean, loginViewModel: LoginViewModel) {
     Button(
-        onClick = { /*TODO*/ }, enabled =  isLoginEnable, modifier = Modifier.fillMaxWidth(),
+        onClick = { loginViewModel.onLoginSelected() }, enabled =  isLoginEnable, modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
-//            backgroundColor = Color(0xFF78C8F9),
-//            disabledBackgroundColor = Color(0xFF78C8F9),
             containerColor = Color(0xFF78C8F9),
             contentColor = Color.White,
             disabledContentColor = Color(0xFF78C8F9)
